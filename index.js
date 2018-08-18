@@ -475,6 +475,7 @@ module.exports = function DreadspireGuide(dispatch) {
                     playerDebuffs = [];
                     flowerId = 999999999;
                     bossHpWarningsNotified = [];
+                    return;
                 }
                 
                 // Boss HP Warnings

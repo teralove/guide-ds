@@ -16,16 +16,16 @@
 <details>
     
     General    
-    ~~- // TODO Fix Boss HP warning messages~~
+    ~~ // TODO Fix Boss HP warning messages~~
     - // TODO Reset module variables?
-    ~~- // TODO Clear timers when boss dies~~
+    ~~ // TODO Clear timers when boss dies~~
     Dakuryon
     - // TODO Fix cage flowers
     - // TODO Improve swipe flower placements
     Meldita
     - // TODO Specify who is targetted with single laser?
     Krakatox
-    ~~- // TODO: plague mechanic + timer~~
+    ~~ // TODO: plague mechanic + timer~~
     Lakan
     - // TODO Laser safepots?
     Desolarus
@@ -46,6 +46,8 @@
 ## Changelog
 <details>
 
+    1.2 (8/18/18)
+    - Fix: Undefined bossInfo error in S_BOSS_GAGE_INFO
     1.1 (8/18/18)
     - Fix: Boss HP warning messages
     - Fix: Clear timers when boss dies
