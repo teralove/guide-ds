@@ -54,4 +54,4 @@
 ---
 
 Feel free to fix bugs, make suggestions, report bugs, etc. You can also help me stay motivated to continue working on this by donating:
-[[[https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif]]](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=PXRFYB39SQP4A&lc=US&item_name=teralove&no_note=0&cn=Add%20special%20instructions%20to%20the%20seller%3a&no_shipping=1&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted) 
+[https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=PXRFYB39SQP4A&lc=US&item_name=teralove&no_note=0&cn=Add%20special%20instructions%20to%20the%20seller%3a&no_shipping=1&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted) 
