@@ -469,7 +469,6 @@ module.exports = function DreadspireGuide(dispatch) {
                 
                 let bossHp = bossHealth();
                 if (bossHp <= 0) {
-                    console.log('boss dead?');
                     bossInfo = undefined;
                     if (timer) clearTimeout(timer);
                     playerDebuffs = [];
