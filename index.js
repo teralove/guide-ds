@@ -29,8 +29,8 @@ module.exports = function DreadspireGuide(dispatch) {
             1112: {msg: 'Stab + Knockup'},
             1134: {msg: 'Debuff (closest)'},         
             1502: {msg: 'Pushback + Cage'}, 
-            1130: {msg: 'Left swipe', spawnFlowers: true, flowers: [{degree: 90, distance: 100}, {degree: 70, distance: 100}, {degree: 110, distance: 100}]}, 
-            1131: {msg: 'Right swipe', spawnFlowers: true, flowers: [{degree: 270, distance: 100}, {degree: 250, distance: 100}, {degree: 290, distance: 100}]},
+            1130: {msg: 'Left swipe', spawnFlowers: true, flowers: [{degree: 90, distance: 100}, {degree: 90, distance: 150}, {degree: 90, distance: 200}]}, 
+            1131: {msg: 'Right swipe', spawnFlowers: true, flowers: [{degree: 270, distance: 100}, {degree: 270, distance: 150}, {degree: 270, distance: 200}]},
 //            1122: {isCage: true, cages: [PizzaOne, PizzaInner, PizzaOuter, PizzaTwo, PizzaLast]}, 
 //            1123: {isCage: true, cages: [PizzaTwo, PizzaOne, PizzaOuter, PizzaInner, PizzaLast]}, 
 //            1124: {isCage: true, cages: [PizzaInner, PizzaTwo, PizzaOne, PizzaOuter, PizzaLast]}, 
@@ -61,7 +61,7 @@ module.exports = function DreadspireGuide(dispatch) {
             1118: {msg: 'Big Jump'},
             1119: {msg: 'Stun'},
             1120: {msg: 'Stun?'},
-            1124: {msg: 'Small Jump'},
+            1124: {msg: 'Small Jump', startTimer: true, delay: 25000, timerMsg: 'Small Jump soon...'},
         },
         // Krakatox
         6000: {
@@ -76,11 +76,13 @@ module.exports = function DreadspireGuide(dispatch) {
             1113: {msg: 'Laser'},
             1133: {msg: 'Slam'},
             1134: {msg: 'Slam + Back'},
+            4107: {msg: 'Plague/Regress', startTimer: true, delay: 55000, timerMsg: 'Plague/Regress soon...'},
             // TODO: plague mechanic
         },
         // Lakan
         7000: {
             1136: {msg: 'Claw'},
+//            1138: (msg: 'Begone'),
             1152: {msg: 'Stun + Back'},
             1154: {msg: 'Out + In'},
             1155: {msg: 'In + Out'},
@@ -199,16 +201,11 @@ module.exports = function DreadspireGuide(dispatch) {
     };
 
     // Dakuryon
-    const PizzaCageDelay = 1800;
+    const PizzaCageDelay = 1;//1800;
     const PizzaSliceDelay = 1000;
-    const DespawnFlowerDelay = 1900;
+    const DespawnFlowerDelay = 1800;
     const DakuryonDebuffTake = [90340315, 90340313, 90340311, 90340309, 90340307];
     const DakuryonDebuffSkip = [90340314, 90340312, 90340310, 90340308, 90340306];
-        
-    // Krakatox
-    const KrakatoxPlagueWarningHp = 0.85;
-    const KrakatoxPlagueWarningMsg = 'plague/regress';
-    // TODO Refactor this with other HP warnings
         
     // Lakan stuff  
     const InversedAction = {
@@ -310,7 +307,7 @@ module.exports = function DreadspireGuide(dispatch) {
 	}
     
     function bossHealth() {
-        return bossInfo.curHP / bossInfo.maxHp;
+        return bossInfo.curHp / bossInfo.maxHp;
     }
 	
 	function startTimer(message, delay) {
@@ -523,12 +520,16 @@ module.exports = function DreadspireGuide(dispatch) {
                 
                 if (bossAction) 
                 {
-                    // Akasha double charge into spin, Darkan spins into drill
+                    // Double attacks into something (Akasha double charge into spin, Darkan spins into drill)
                     if (bossAction.checkDouble) {
                         if (event.skill.id === lastSkill) {
                             sendMessage(bossAction.msg);
                         }
-                    } 
+                    }
+                    // Start timer
+                    else if (bossAction.startTimer) {
+                        startTimer(bossAction.timerMsg, bossAction.delay);
+                    }
                     // Dakuryon cage
                     else if (bossAction.isCage) {
                         bossLoc = event.loc;
@@ -617,10 +618,11 @@ module.exports = function DreadspireGuide(dispatch) {
                         playerDebuffs.push(event.id);
 
                         if (DakuryonDebuffTake.includes(event.id)) dakuryonDebuffMessage = 'Take ' + dakuryonDebuffMessage;
-                        else if (DakuryonDebuffSkip.includes(event.id)) dakuryonDebuffMessage = 'Take ' + dakuryonDebuffMessage;
+                        else if (DakuryonDebuffSkip.includes(event.id)) dakuryonDebuffMessage = 'Skip ' + dakuryonDebuffMessage;
 
                         if ([90340306, 90340307].includes(event.id)) {
 //                            sendMessage(dakuryonDebuffMessage);
+                                //     - Fix: Dakuryon cage message properly tells you take/skip order
                             dakuryonDebuffMessage = '';
                         }
                     }
@@ -635,11 +637,11 @@ module.exports = function DreadspireGuide(dispatch) {
                     if (timer) clearTimeout(timer);
                     if (bossInfo.templateId === 7000) {
                         isReversed = (bossHealth() < 0.5) ? true : false;
-//                        if (inSoulWorld) {
-//                            sendMessage(BossActions[7000][InversedAction[BossMessages[msgId]]].msg);
-//                        } else {
+                        if (inSoulWorld) {
+                            sendMessage(BossActions[7000][InversedAction[BossMessages[msgId]]].msg);
+                        } else {
                             sendMessage(BossActions[7000][BossMessages[msgId]].msg);
-//                        }
+                        }
                     }
                 }
             });
@@ -656,11 +658,8 @@ module.exports = function DreadspireGuide(dispatch) {
             });
             
             hook('S_NPC_STATUS', 1, (event) => {	
-                if (!bossInfo) return;
-                
-                if (bossInfo.id.equals(event.creature) && bossInfo.templateId === 9000) {
-                    isEnraged = event.enraged;
-                }
+                if (!bossInfo) return;                
+                isEnraged = event.enraged;
             });
         }
     }

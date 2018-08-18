@@ -8,7 +8,7 @@
 - Arguments are optional
 
 ### `ds [stream]'
-- Toggle stream mode (Disable notices. Send chat messages quietly to yourself)
+- Toggle stream mode (Disable notices)
 - Default is off
 
 ---
@@ -16,16 +16,16 @@
 <details>
     
     General    
-    - // TODO Fix Boss HP warning messages
+    ~~- // TODO Fix Boss HP warning messages~~
     - // TODO Reset module variables?
-    - // TODO Clear timers when boss dies
+    ~~- // TODO Clear timers when boss dies~~
     Dakuryon
     - // TODO Fix cage flowers
     - // TODO Improve swipe flower placements
     Meldita
     - // TODO Specify who is targetted with single laser?
     Krakatox
-    - // TODO: plague mechanic + timer    
+    ~~- // TODO: plague mechanic + timer~~
     Lakan
     - // TODO Laser safepots?
     Desolarus
@@ -46,12 +46,19 @@
 ## Changelog
 <details>
 
-    1.00 (8/17/18)
+    1.1 (8/18/18)
+    - Fix: Boss HP warning messages
+    - Fix: Clear timers when boss dies
+    - Fix: Lakan's new message at 50% would tell you the normal version even when he was in soul world.
+    - Fix: Lakan next messages would be wrong after 50%
+    - Added: Kelsaik small jump warning timer    
+    - Added: Krakatox plague mechanic callout + warning timer
+    - Removed: Old unused Krakatox timer code
+    1.0 (8/17/18)
     - Release
 
 </details>
 
 ---
 
-Feel free to fix bugs, make suggestions, report bugs, etc. You can also help me stay motivated to continue working on this by donating:
-[https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=PXRFYB39SQP4A&lc=US&item_name=teralove&no_note=0&cn=Add%20special%20instructions%20to%20the%20seller%3a&no_shipping=1&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted) 
+Feel free to fix bugs, make suggestions, report bugs, etc. You can also help me stay motivated to continue working on this by [donating](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=PXRFYB39SQP4A&lc=US&item_name=teralove&no_note=0&cn=Add%20special%20instructions%20to%20the%20seller%3a&no_shipping=1&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted).
