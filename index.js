@@ -8,7 +8,7 @@ module.exports = function DreadspireGuide(dispatch) {
     const BossActions = {
         // Akasha 
         1000: {
-            1102: {msg: 'Spin', checkDouble: true},
+            1102: {msg: 'Spin', checkDouble: true}, // Charge attack
             1304: {msg: 'Backpedal + Spin'},         
             1105: {msg: 'Puke'}, 
             1203: {msg: 'Sleep'},
@@ -29,14 +29,12 @@ module.exports = function DreadspireGuide(dispatch) {
             1112: {msg: 'Stab + Knockup'},
             1134: {msg: 'Debuff (closest)'},         
             1502: {msg: 'Pushback + Cage'}, 
-            1130: {msg: 'Left swipe', spawnFlowers: true, flowers: [{degree: 90, distance: 100}, {degree: 90, distance: 150}, {degree: 90, distance: 200}]}, 
-            1131: {msg: 'Right swipe', spawnFlowers: true, flowers: [{degree: 270, distance: 100}, {degree: 270, distance: 150}, {degree: 270, distance: 200}]},
-//            1122: {isCage: true, cages: [PizzaOne, PizzaInner, PizzaOuter, PizzaTwo, PizzaLast]}, 
-//            1123: {isCage: true, cages: [PizzaTwo, PizzaOne, PizzaOuter, PizzaInner, PizzaLast]}, 
-//            1124: {isCage: true, cages: [PizzaInner, PizzaTwo, PizzaOne, PizzaOuter, PizzaLast]}, 
-//            1127: {isCage: true, cages: [PizzaOne, PizzaTwo, PizzaInner, PizzaOuter, PizzaLast]},
-            // TODO Fix swipe flowers
-            // TOFO Fix cage flowers
+            1130: {msg: 'Left swipe', spawnFlowers: true, func: dakuryonLeftSwipe}, 
+            1131: {msg: 'Right swipe', spawnFlowers: true, func: dakuryonRightSwipe},
+            1122: {isCage: true, cages: [PizzaOne, PizzaInner, PizzaOuter, PizzaTwo, PizzaLast], delay: 0}, 
+            1123: {isCage: true, cages: [PizzaTwo, PizzaOne, PizzaOuter, PizzaInner, PizzaLast], delay: 200}, 
+            1124: {isCage: true, cages: [PizzaInner, PizzaTwo, PizzaOne, PizzaOuter, PizzaLast], delay: 0}, 
+            1127: {isCage: true, cages: [PizzaOne, PizzaTwo, PizzaInner, PizzaOuter, PizzaLast], delay: 200},
         },
         // Meldita
         4000: {            
@@ -58,9 +56,9 @@ module.exports = function DreadspireGuide(dispatch) {
             1107: {msg: 'Double Paw'},
             1108: {msg: 'Fire AOE'},
             1109: {msg: 'Ice AOE'},
-            1118: {msg: 'Big Jump'},
-            1119: {msg: 'Stun'},
-            1120: {msg: 'Stun?'},
+            1118: {msg: 'Big Jump + Adds'},
+            1119: {msg: 'Stun?'},
+            1120: {msg: 'Stun'},
             1124: {msg: 'Small Jump', startTimer: true, delay: 25000, timerMsg: 'Small Jump soon...'},
         },
         // Krakatox
@@ -77,12 +75,11 @@ module.exports = function DreadspireGuide(dispatch) {
             1133: {msg: 'Slam'},
             1134: {msg: 'Slam + Back'},
             4107: {msg: 'Plague/Regress', startTimer: true, delay: 55000, timerMsg: 'Plague/Regress soon...'},
-            // TODO: plague mechanic
         },
         // Lakan
         7000: {
             1136: {msg: 'Claw'},
-//            1138: (msg: 'Begone'),
+            1138: {spawnFlowers: true, func: BegoneRange}, // Begone
             1152: {msg: 'Stun + Back'},
             1154: {msg: 'Out + In'},
             1155: {msg: 'In + Out'},
@@ -98,7 +95,6 @@ module.exports = function DreadspireGuide(dispatch) {
             1902: {msg: '(Marks) Debuff (farthest)',   next: 1906,    prev: 1904},
             1906: {msg: '(Circles) Gather',            next: 1904,    prev: 1902},
             1904: {msg: '(Bombs) Gather + no cleanse', next: 1902,    prev: 1906},
-            // TODO Laser safepots?
         },
         // Desolarus
         8000: {
@@ -110,8 +106,8 @@ module.exports = function DreadspireGuide(dispatch) {
 //            1109: {msg: 'Balls'},            
             1110: {msg: 'Lightning'},
             3105: {msg: 'Red Circles'},
-            // TODO Include Balls + Specify pylon?
-            // TODO Specify Viyor direction breaking pylons?
+            // TODO Balls and target pylon?
+            // TODO Viyor direction breaking pylons?
         },
         // Darkan
         9000: {
@@ -125,30 +121,37 @@ module.exports = function DreadspireGuide(dispatch) {
             1115: {msg: 'Puddles'},
             1302: {msg: 'Bomb'},
 //            1303: {msg: 'Drill'},
-            // TODO Add spin messages
-            // TODO Add Shout
-            // TODO Add Ghost timer
+            // TODO spin messages
+            // TODO Shouts
+            // TODO Ghost
             // TODO Swipe safepots?
         },
         // Shandra Manaya
         10000: {
             1102: {msg: 'Donut'},
+//            1103: {msg: 'Slap'},
             1104: {msg: 'Jump'},  
+//            1105: {msg: 'Metamorphic'}, // Front side
             1106: {msg: 'Grenade'}, 
             1107: {msg: 'Trample'},
-            1108: {msg: 'Fly'},
+            1108: {msg: 'Flying'},
             1109: {msg: 'Puddle'},
             1111: {msg: 'Cage'}, 
-            1114: {msg: 'Metamorphic'},    
+            1112: {msg: 'Stand', startTimer: true, delay: 45000, timerMsg: 'Stand soon...'},
+//            1113: {msg: 'L-Metamorphic'}, //  Left side
+//            1114: {msg: 'R-Metamorphic'}, // Right side   
             1115: {msg: 'Tail'},             
+//            1201: {msg: 'Staggered'},
             1202: {msg: 'Trample'},
+            1203: {msg: 'Walk'}, 
             1204: {msg: 'Curl'},
             1205: {msg: 'Dive'}, 
+//            1206: {msg: 'Backstep'}, 
+//            13??: {msg: 'Plague/regress', startTimer: true, delay: 55000, timerMsg: 'Plague/regress soon...'}, // Great ones
             1305: {msg: 'Staggered'}, 
-            2203: {msg: 'Walk'}, 
             // TODO Plague mechanic?
-            // TODO Stand and debuff mechanic
-            // TODO Laser safespots?
+            // TODO Stand and debuff mechanic?
+            // TODO safespots?
         },
     };
 
@@ -172,10 +175,12 @@ module.exports = function DreadspireGuide(dispatch) {
 //            {hp: 0.90, msg: 'Pushing 90%... Summoning outer ghosts' }
             {hp: 0.75, msg: 'Pushing 75%... Puddles soon' },
             {hp: 0.70, msg: 'Pushing 70%... Ghost soon' },
-            {hp: 0.50, msg: 'Pushing 50%... Shouts and eviscerate swipes soon' }
+            {hp: 0.50, msg: 'Pushing 50%... Shouts and eviscerate swipes soon' },
         ],
         10000: [
-            {hp: 0.90, msg: 'Pushing 90%... Stand soon' }
+            {hp: 0.90, msg: 'Pushing 90%... Stand soon' },
+            {hp: 0.50, msg: 'Pushing 50%... Plague/regress soon' },
+            {hp: 0.08, msg: 'Pushing 8%... Walk soon' },
         ]
     }
     const HpDiffBeforeWarning = 0.05;    
@@ -187,25 +192,20 @@ module.exports = function DreadspireGuide(dispatch) {
         90340704: 1905,   // Lakan is trying to take you on one at a time.	
         90340705: 1903,   // Lakan intends to kill all of you at once.
         // Darkan (Quest Balloon)
-        9034901: {msg: 'Double inc'}, // "I!"
-//        9034902: {msg: 'Double inc'), // "Will!"
-//        9034903: {msg: 'Double inc'), // "tear you apart!"
+        9034901: {msg: 'Double inc', checkEnrage: true}, // "I!"
+//        9034902: {), // "Will!"
+//        9034903: {), // "tear you apart!"
     };    
     
     const BossAbnormalities = {
         // Akasha
         90340105: {msg: 'Stun it!', startTimer: true, delay: 60000, timerMsg: 'Stun soon...'},
-        // Krakatox        
-        //????????: {msg: 'plague/regress!', startTimer: true, delay: 60000, timerMsg: 'Soon -> plague/regress'},
-        // TODO Queen?
     };
 
     // Dakuryon
-    const PizzaCageDelay = 1;//1800;
     const PizzaSliceDelay = 1000;
-    const DespawnFlowerDelay = 1800;
-    const DakuryonDebuffTake = [90340315, 90340313, 90340311, 90340309, 90340307];
-    const DakuryonDebuffSkip = [90340314, 90340312, 90340310, 90340308, 90340306];
+    const DakuryonDebuffSkip = [90340315, 90340313, 90340311, 90340309, 90340307];
+    const DakuryonDebuffTake = [90340314, 90340312, 90340310, 90340308, 90340306];
         
     // Lakan stuff  
     const InversedAction = {
@@ -238,7 +238,7 @@ module.exports = function DreadspireGuide(dispatch) {
         flowerId = 999999999,
         playerDebuffs = [],
         bossHpWarningsNotified = [],
-        // Akasha+Darkan?
+        // Akasha,Darkan
         lastSkill = undefined,
         // Dakuryon
         dakuryonDebuffMessage = '',
@@ -285,7 +285,6 @@ module.exports = function DreadspireGuide(dispatch) {
             if (!insidemap) command.message('Welcome to Dreadspire');
             insidemap = true;
             load();
-            // TODO Reset module variables?
         } else {
             insidemap = false;
             unload();
@@ -318,7 +317,7 @@ module.exports = function DreadspireGuide(dispatch) {
 		}, delay);	
 	}
 
-	function SpawnFlower(position){
+	function SpawnFlower(position, despawnDelay = 1200){
 		dispatch.toClient('S_SPAWN_COLLECTION', 4, {
 			gameId: flowerId,
 			id: 559,
@@ -329,7 +328,7 @@ module.exports = function DreadspireGuide(dispatch) {
             extractorDisabled: false,
             extractorDisabledTime: 0
 		});
-		setTimeout(DespawnFlower, DespawnFlowerDelay, flowerId)
+		setTimeout(DespawnFlower, despawnDelay, flowerId)
 		flowerId--;
 	}
 	
@@ -341,125 +340,112 @@ module.exports = function DreadspireGuide(dispatch) {
 	}
     
 	function SpawnLoc(degrees, radius) {
-        let r = null, rads = null, finalrad = null, spawnx = null, spawny = null, pos = null;
-        r = (bossLoc.w / 0x8000) * Math.PI;
-        rads = (degrees * Math.PI/180);
-        finalrad = r - rads;
-        spawnx = bossLoc.x + radius * Math.cos(finalrad);
-        spawny = bossLoc.y + radius * Math.sin(finalrad);
-        pos = {x:spawnx,y:spawny};
-		return pos;
+        let rads = (degrees * Math.PI/180);
+        let finalrad = bossLoc.w - rads;
+        
+        let spawnx = bossLoc.x + radius * Math.cos(finalrad);
+        let spawny = bossLoc.y + radius * Math.sin(finalrad);
+        return {x:spawnx,y:spawny};
 	}
+    
+    // Dakuryon Safespots 
+    function dakuryonLeftSwipe() {
+        SpawnFlower(SpawnLoc(240,100));
+        SpawnFlower(SpawnLoc(265,100));
+        SpawnFlower(SpawnLoc(270,100));
+        SpawnFlower(SpawnLoc(285,100));
+        SpawnFlower(SpawnLoc(300,100));
+    }
+    function dakuryonRightSwipe() {
+        SpawnFlower(SpawnLoc(60,100));
+        SpawnFlower(SpawnLoc(75,100));
+        SpawnFlower(SpawnLoc(90,100));
+        SpawnFlower(SpawnLoc(105,100));
+        SpawnFlower(SpawnLoc(120,100));
+    }    
     
     function skipPizzaSlice(abnormalityId) {
         return DakuryonDebuffSkip.includes(abnormalityId) ? true : false;
     }
     
-    // TODO Improve flower placements
     function PizzaOne(abnormalityId, delay){
         setTimeout(()=>{
             if (skipPizzaSlice(abnormalityId)) {
-                SpawnFlower(SpawnLoc(17,150));
-                SpawnFlower(SpawnLoc(75,150));
-                SpawnFlower(SpawnLoc(133,150));
-                SpawnFlower(SpawnLoc(195,150));
-                SpawnFlower(SpawnLoc(318,150));
-                SpawnFlower(SpawnLoc(253,150));
+                for (let i = 0; i < 6; i++) {
+                    SpawnFlower(SpawnLoc(i*60+45, 200));
+                }
             } else {
-                SpawnFlower(SpawnLoc(47,150));
-                SpawnFlower(SpawnLoc(105,150));
-                SpawnFlower(SpawnLoc(163,150));
-                SpawnFlower(SpawnLoc(225,150));
-                SpawnFlower(SpawnLoc(348,150));
-                SpawnFlower(SpawnLoc(283,150));
+                for (let i = 0; i < 6; i++) {
+                    SpawnFlower(SpawnLoc(i*60+15, 200));
+                }
             }
         }, delay);
 	}
 	function PizzaTwo(abnormalityId, delay){
         setTimeout(()=>{
             if (skipPizzaSlice(abnormalityId)) {
-                SpawnFlower(SpawnLoc(47,150));
-                SpawnFlower(SpawnLoc(105,150));
-                SpawnFlower(SpawnLoc(163,150));
-                SpawnFlower(SpawnLoc(225,150));
-                SpawnFlower(SpawnLoc(348,150));
-                SpawnFlower(SpawnLoc(283,150));
+                for (let i = 0; i < 6; i++) {
+                    SpawnFlower(SpawnLoc(i*60+15, 200));
+                }
             } else {
-                SpawnFlower(SpawnLoc(17,150));
-                SpawnFlower(SpawnLoc(75,150));
-                SpawnFlower(SpawnLoc(133,150));
-                SpawnFlower(SpawnLoc(195,150));
-                SpawnFlower(SpawnLoc(318,150));
-                SpawnFlower(SpawnLoc(253,150));
+                for (let i = 0; i < 6; i++) {
+                    SpawnFlower(SpawnLoc(i*60+45, 200));
+                }
             }
         }, delay);
 	}
 	function PizzaOuter(abnormalityId, delay){ 
         setTimeout(()=>{
             if (skipPizzaSlice(abnormalityId)) {
-                SpawnFlower(SpawnLoc(160,75));
-                SpawnFlower(SpawnLoc(80,75));
-                SpawnFlower(SpawnLoc(40,75));
-                SpawnFlower(SpawnLoc(0,75));
-                SpawnFlower(SpawnLoc(0,-75));
-                SpawnFlower(SpawnLoc(160,-75));
-                SpawnFlower(SpawnLoc(80,-75));
-                SpawnFlower(SpawnLoc(40,-75));
+                for (let i = 0; i < 12; i++) {
+                    SpawnFlower(SpawnLoc(i*30+15, 150));
+                }
             } else {
-                SpawnFlower(SpawnLoc(160,275));
-                SpawnFlower(SpawnLoc(80,275));
-                SpawnFlower(SpawnLoc(40,275));
-                SpawnFlower(SpawnLoc(0,275));
-                SpawnFlower(SpawnLoc(0,-275));
-                SpawnFlower(SpawnLoc(160,-275));
-                SpawnFlower(SpawnLoc(80,-275));
-                SpawnFlower(SpawnLoc(40,-275));        
+                for (let i = 0; i < 12; i++) {
+                    SpawnFlower(SpawnLoc(i*30+15, 275));
+                }
             }
         }, delay);
 	}
 	function PizzaInner(abnormalityId, delay){ 
         setTimeout(()=>{
             if (skipPizzaSlice(abnormalityId)) {
-                SpawnFlower(SpawnLoc(160,275));
-                SpawnFlower(SpawnLoc(80,275));
-                SpawnFlower(SpawnLoc(40,275));
-                SpawnFlower(SpawnLoc(0,275));
-                SpawnFlower(SpawnLoc(0,-275));
-                SpawnFlower(SpawnLoc(160,-275));
-                SpawnFlower(SpawnLoc(80,-275));
-                SpawnFlower(SpawnLoc(40,-275));
+                for (let i = 0; i < 12; i++) {
+                    SpawnFlower(SpawnLoc(i*30+15, 275));
+                }
             } else {
-                SpawnFlower(SpawnLoc(160,75));
-                SpawnFlower(SpawnLoc(80,75));
-                SpawnFlower(SpawnLoc(40,75));
-                SpawnFlower(SpawnLoc(0,75));
-                SpawnFlower(SpawnLoc(0,-75));
-                SpawnFlower(SpawnLoc(160,-75));
-                SpawnFlower(SpawnLoc(80,-75));
-                SpawnFlower(SpawnLoc(40,-75));            
+                for (let i = 0; i < 12; i++) {
+                    SpawnFlower(SpawnLoc(i*30+15, 150));
+                }           
             }
         }, delay);
 	}
 	function PizzaLast(abnormalityId, delay){
         setTimeout(()=>{
             if (skipPizzaSlice(abnormalityId)) {        
-                SpawnFlower(SpawnLoc(283,150));
-                SpawnFlower(SpawnLoc(105,150));
-                SpawnFlower(SpawnLoc(17,150));
-                SpawnFlower(SpawnLoc(195,150));
+                SpawnFlower(SpawnLoc(15,175));
+                SpawnFlower(SpawnLoc(105,175));
+                SpawnFlower(SpawnLoc(195,175));
+                SpawnFlower(SpawnLoc(285,175));
             } else {
-                SpawnFlower(SpawnLoc(75,150));
-                SpawnFlower(SpawnLoc(133,150));
-                SpawnFlower(SpawnLoc(318,150));
-                SpawnFlower(SpawnLoc(253,150));
-                SpawnFlower(SpawnLoc(47,150));
-                SpawnFlower(SpawnLoc(163,150));
-                SpawnFlower(SpawnLoc(225,150));
-                SpawnFlower(SpawnLoc(348,150));
+                SpawnFlower(SpawnLoc(45,175));
+                SpawnFlower(SpawnLoc(75,175));
+                SpawnFlower(SpawnLoc(135,175));
+                SpawnFlower(SpawnLoc(165,175));
+                SpawnFlower(SpawnLoc(225,175));
+                SpawnFlower(SpawnLoc(255,175));
+                SpawnFlower(SpawnLoc(315,175));
+                SpawnFlower(SpawnLoc(345,175));
             }
         }, delay);
-	}
+	} 
     
+    // Lakan safespots
+    function BegoneRange() {
+        for (let degree = 0; degree < 360; degree += 360 / 20) {
+            SpawnFlower(SpawnLoc(degree,250), 6000);
+        }
+    }
     
     function load() {
         if(!hooks.length) {
@@ -468,14 +454,6 @@ module.exports = function DreadspireGuide(dispatch) {
                 bossInfo = event;
                 
                 let bossHp = bossHealth();
-                if (bossHp <= 0) {
-                    bossInfo = undefined;
-                    if (timer) clearTimeout(timer);
-                    playerDebuffs = [];
-                    flowerId = 999999999;
-                    bossHpWarningsNotified = [];
-                    return;
-                }
                 
                 // Boss HP Warnings
                 if (BossHpWarnings[bossInfo.templateId]) {
@@ -487,9 +465,9 @@ module.exports = function DreadspireGuide(dispatch) {
                             }
                         }
                     }
-                }
-                
-                // Lakan timer stuff
+                }                
+                                
+                // Reset Lakan
                 if (bossInfo.templateId === 7000) {
                     if (bossHp <= 0 || bossHp >= 1) {
                         lastNextAction = undefined;
@@ -507,6 +485,15 @@ module.exports = function DreadspireGuide(dispatch) {
                         shieldWarned = true;
                     }
                 }
+                
+                // Reset all bosses
+                if (bossHp <= 0) {
+                    bossInfo = undefined;
+                    if (timer) clearTimeout(timer);
+                    playerDebuffs = [];
+                    flowerId = 999999999;
+                    bossHpWarningsNotified = [];
+                }
             });
             
             hook('S_ACTION_STAGE', 6, (event) => {  //TODO CHECK Correct version             
@@ -517,39 +504,38 @@ module.exports = function DreadspireGuide(dispatch) {
                 
                 let bossAction = BossActions[bossInfo.templateId][event.skill.id];
                 if (!bossAction) bossAction = BossActions[bossInfo.templateId][event.skill.id - 1000]; // check if skill is enraged
-                
+                                
                 if (bossAction) 
                 {
-                    // Double attacks into something (Akasha double charge into spin, Darkan spins into drill)
+                    bossLoc = event.loc;
+                    bossLoc.w = event.w;
+                    
+                    // Double attacks into something
                     if (bossAction.checkDouble) {
                         if (event.skill.id === lastSkill) {
                             sendMessage(bossAction.msg);
+                            lastSkill = undefined;
+                            return;
                         }
                     }
                     // Start timer
                     else if (bossAction.startTimer) {
                         startTimer(bossAction.timerMsg, bossAction.delay);
+                        if (bossAction.msg) sendMessage(bossAction.msg);
                     }
                     // Dakuryon cage
                     else if (bossAction.isCage) {
-                        bossLoc = event.loc;
-                        bossLoc.w = event.w;
                         setTimeout(()=> {
                             for(let i = 0; i < bossAction.cages.length; i++) {
                                 bossAction.cages[i](playerDebuffs[i], PizzaSliceDelay * i);
                             }
-                        }, PizzaCageDelay);
+                        }, bossAction.delay);
                     }
                     // Spawn Flowers
                     else if (bossAction.spawnFlowers) {
-                        bossLoc = event.loc;
-                        bossLoc.w = event.w;
-                        for(let i = 0; i < bossAction.flowers.length; i++) {
-                            SpawnFlower(SpawnLoc(bossAction.flowers[i].degree, bossAction.flowers[i].distance));
-                        }
+                        if (bossAction.func) bossAction.func();
                         if (bossAction.msg) sendMessage(bossAction.msg);
                     }
-
                     // Normal messages
                     else if (bossAction.msg) {
                         sendMessage(bossAction.msg);
@@ -574,14 +560,14 @@ module.exports = function DreadspireGuide(dispatch) {
                             startTimer('Next: ' + nextMessage, LakanNextMessageDelay);
                             lastInversionTime = Date.now();
                             shieldWarned = false;
-                        } else if (!isReversed && BossActions[7000][event.skill.id].next) {                       // normal "next"
-                            nextMessage = BossActions[7000][BossActions[7000][event.skill.id].next].msg;
+                        } else if (!isReversed && bossAction.next) {                                         // normal "next"
+                            nextMessage = BossActions[7000][bossAction.next].msg;
                             startTimer('Next: ' + nextMessage, LakanNextMessageDelay);
-                            lastNextAction = BossActions[7000][event.skill.id].next;
-                        } else if (isReversed && BossActions[7000][event.skill.id].prev) {                        // reversed "next"
-                            nextMessage = BossActions[7000][BossActions[event.skill.id].prev].msg;
+                            lastNextAction = bossAction.next;
+                        } else if (isReversed && bossAction.prev) {                                          // reversed "next"
+                            nextMessage = BossActions[7000][bossAction.prev].msg;
                             startTimer('Next: ' + nextMessage, LakanNextMessageDelay);
-                            lastNextAction = BossActions[7000][event.skill.id].prev;
+                            lastNextAction = bossAction.prev;
                         }
                     }
                     
@@ -615,14 +601,14 @@ module.exports = function DreadspireGuide(dispatch) {
                 // Abnormality on player
                 else if (event.target.equals(gameId)) {
                     if (bossInfo.templateId === 3000) {
-                        playerDebuffs.push(event.id);
-
                         if (DakuryonDebuffTake.includes(event.id)) dakuryonDebuffMessage = 'Take ' + dakuryonDebuffMessage;
                         else if (DakuryonDebuffSkip.includes(event.id)) dakuryonDebuffMessage = 'Skip ' + dakuryonDebuffMessage;
+                        else return;
+                                                
+                        playerDebuffs.unshift(event.id);
 
                         if ([90340306, 90340307].includes(event.id)) {
-//                            sendMessage(dakuryonDebuffMessage);
-                                //     - Fix: Dakuryon cage message properly tells you take/skip order
+                            sendMessage(dakuryonDebuffMessage);
                             dakuryonDebuffMessage = '';
                         }
                     }
@@ -646,12 +632,12 @@ module.exports = function DreadspireGuide(dispatch) {
                 }
             });
 	
-            hook('S_DUNGEON_EVENT_MESSAGE', 1, (event) => {	
+            hook('S_QUEST_BALLOON', 1, (event) => {	
                 if (!bossInfo) return;
                 
                 let msgId = parseInt(event.message.replace('@dungeon:', ''));
                 if (BossMessages[msgId]) {
-                    if (isEnraged) {
+                    if (BossMessages[msgId].checkEnrage && isEnraged) {
                         if (BossMessages[msgId].msg) sendMessage(BossMessages[msgId].msg);
                     }
                 }
