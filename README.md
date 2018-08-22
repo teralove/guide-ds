@@ -16,6 +16,9 @@
 ## Changelog
 <details>
 
+    1.5
+    - Add: Jinn attack flowers
+    - Add: Meldita line attack flowers
     1.4
     - Fix: Akasha Spin message being sent unexpectedly
     - Fix: Lakan's next message would be incorrect if he changed worlds immediately after reversal

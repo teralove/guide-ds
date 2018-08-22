@@ -41,7 +41,7 @@ module.exports = function DreadspireGuide(dispatch) {
             1102: {msg: 'Inner rings'},
             1103: {msg: 'Outer rings'},
             1107: {msg: 'Front'},
-            1108: {msg: 'Lines'}, 
+            1108: {msg: 'Lines', func: MelditaLines}, 
             1109: {msg: 'Single Laser'},
             1114: {msg: 'Secondary'},
             1205: {msg: '360 Laser + Worms'},
@@ -60,6 +60,14 @@ module.exports = function DreadspireGuide(dispatch) {
             1119: {msg: 'Stun?'},
             1120: {msg: 'Stun'},
             1124: {msg: 'Small Jump', startTimer: true, delay: 25000, timerMsg: 'Small Jump soon...'},
+        },
+        // Ice Jinn
+        5002: {
+           3106: {func: JinnAttack},
+        },
+        // Fire Jinn
+        5003: {
+            3106: {func: JinnAttack},
         },
         // Krakatox
         6000: {
@@ -217,7 +225,18 @@ module.exports = function DreadspireGuide(dispatch) {
         // Akasha
         90340105: {msg: 'Stun it!', startTimer: true, delay: 60000, timerMsg: 'Stun soon...'},
     };
-
+    
+    const Mobs = [
+        { // Ice Jinn
+            templateId: 5002,
+            huntingZoneId: 434
+        },
+        { // Fire Jinns
+            templateId: 5003,
+            huntingZoneId: 434
+        },
+    ];
+    
     // Dakuryon
     const PizzaSliceDelay = 1000;
     const DakuryonDebuffSkip = [90340315, 90340313, 90340311, 90340309, 90340307];
@@ -271,7 +290,8 @@ module.exports = function DreadspireGuide(dispatch) {
 		isReversed = false, // below 50% hp
 		inSoulWorld = false,
         // Darkan
-        isEnraged = false;        
+        isEnraged = false, 
+        currentMobs = [];        
         
     dispatch.hook('S_LOGIN', 10, (event) => {
         gameId = event.gameId;
@@ -461,6 +481,19 @@ module.exports = function DreadspireGuide(dispatch) {
         }, delay);
 	} 
     
+    function MelditaLines() {
+        for (let i = 1; i < 6; i++) {
+            SpawnFlower(SpawnLoc(0, i*50), 1500, 556);
+            SpawnFlower(SpawnLoc(0, i*-50), 1500, 556);
+        }
+    }
+    
+    function JinnAttack() {
+        for (let i = 1; i < 10; i++) {
+            SpawnFlower(SpawnLoc(0, i*50), 2500, 556);
+        }
+    }
+    
     // Lakan safespots
     function BegoneRange() {
         for (let degree = 0; degree < 360; degree += 360 / 20) {
@@ -581,13 +614,15 @@ module.exports = function DreadspireGuide(dispatch) {
             
             hook('S_ACTION_STAGE', 6, (event) => {  //TODO CHECK Correct version             
                 if (!bossInfo) return;
-                if (!event.gameId.equals(bossInfo.id)) return;
-                if (!BossActions[bossInfo.templateId]) return;
+                /* KLUDGE: Unable to find uint64 in array with .includes() ??? Converting to string for comparison atm...  */
+                if (!event.gameId.equals(bossInfo.id) && !currentMobs.includes(event.gameId.toString())) return;  
+                if (!BossActions[event.templateId]) return;
                 if (event.stage != 0) return;
+
                 
-                let bossAction = BossActions[bossInfo.templateId][event.skill.id];
-                if (!bossAction) bossAction = BossActions[bossInfo.templateId][event.skill.id - 1000]; // check if skill is enraged
-                                
+                let bossAction = BossActions[event.templateId][event.skill.id];
+                if (!bossAction) bossAction = BossActions[event.templateId][event.skill.id - 1000]; // check if skill is enraged
+                
                 if (bossAction) 
                 {
                     bossLoc = event.loc;
@@ -647,16 +682,6 @@ module.exports = function DreadspireGuide(dispatch) {
                     
                 }
                 lastSkill = event.skill.id;
-            });
-            
-            hook('S_SPAWN_NPC', 8, event => {
-                if (!bossInfo) return;
-                
-                if (bossInfo.templateId === 8000) {
-                    if (NpcSpawns[event.templateId]) {
-                        sendMessage(NpcSpawns[event.templateId].msg);
-                    }
-                }
             });
 
             hook('S_ABNORMALITY_BEGIN', 2, event => {  
@@ -722,6 +747,25 @@ module.exports = function DreadspireGuide(dispatch) {
                 if (!bossInfo) return;                
                 isEnraged = event.enraged;
             });
+            
+            
+            hook('S_SPAWN_NPC', 8, event => {
+                if (!bossInfo) return;
+                
+                if (bossInfo.templateId === 8000) {
+                    if (NpcSpawns[event.templateId]) {
+                        sendMessage(NpcSpawns[event.templateId].msg);
+                    }
+                }
+                
+                for (let i = 0; i < Mobs.length; i++) {
+                    if(Mobs[i].templateId == event.templateId && Mobs[i].huntingZoneId == event.huntingZoneId) {
+                        currentMobs.push(event.gameId.toString());
+                    }                                        
+                }                
+                
+            });
+            
         }
     }
 	
