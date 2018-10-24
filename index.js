@@ -1,31 +1,33 @@
-const Command = require('command');
-
-module.exports = function DreadspireGuide(dispatch) {	
-    const command = Command(dispatch);
+module.exports = function DreadspireGuide(mod) {	
+	const config = require('./config.json');
     const mapID = 9034;
         
     // BossAction[TempalateId][Skill]
     const BossActions = {
         // Akasha 
         1000: {
-            1102: {msg: 'Spin', checkDouble: true}, // Charge attack
-            1304: {msg: 'Backpedal + Spin'},         
-            1105: {msg: 'Puke'}, 
-            1203: {msg: 'Sleep'},
+			enabled: config.boss1,
+            1102: {msg: 'Spin', checkDouble: true, setting: "akashaSpin"}, // Charge attack
+            1304: {msg: 'Backpedal + Spin', setting: "akashaBackpedalSpin"},         
+            1105: {msg: 'Puke', setting: "akashaPuke"}, 
+            1203: {msg: 'Sleep', setting: "akashaSleep"},
         },
         // Kaprima
         2000: {
-            1101: {msg: 'Smash inc'},
-            1102: {msg: 'Spin'},
-            1107: {msg: 'Back'}, // stun
-            1108: {msg: 'Front'},
-            1109: {msg: 'Back spin'},
-            1110: {msg: 'Get Out'},
-            1122: {msg: 'Get In'},
-            1119: {msg: 'Leash'},
+			enabled: config.boss2,
+            1101: {msg: 'Smash inc', setting: "kaprimaSmash"},
+            1102: {msg: 'Spin', setting: "kaprimaSpin"},
+            1105: {msg: 'Back spin', setting: "kaprimaBackSpin"}, // breath attack before backspin
+            1107: {msg: 'Back', setting: "kaprimaBackStun"}, // stun
+            1108: {msg: 'Front', setting: "kaprimaFront"},
+//            1109: {msg: 'Back spin'}, // backspin as it's happening
+            1110: {msg: 'Get Out', setting: "kaprimaGetOut"},
+            1122: {msg: 'Get In', setting: "kaprimaGetIn"},
+            1119: {msg: 'Leash', setting: "kaprimaLeash"},
         },
         // Dakuryon
         3000: {
+			enabled: config.boss3,
             1112: {msg: 'Stab + Knockup'},
             1134: {msg: 'Debuff (closest)'},         
             1502: {msg: 'Pushback + Cage'}, 
@@ -38,6 +40,7 @@ module.exports = function DreadspireGuide(dispatch) {
         },
         // Meldita
         4000: {            
+			enabled: config.boss4,
             1102: {msg: 'Inner rings'},
             1103: {msg: 'Outer rings'},
             1107: {msg: 'Front'},
@@ -50,12 +53,17 @@ module.exports = function DreadspireGuide(dispatch) {
         },
         // Kelsaik
         5000: {
+			enabled: config.boss5,
+//            1101: {msg: 'Fire paw'},
+//            1102: {msg: 'Ice paw'},
             1103: {msg: 'Tail'},
-            1104: {msg: 'Ice'},
-            1105: {msg: 'Fire'},
+            1104: {msg: 'Ice', func: IceAoe},
+            1105: {msg: 'Fire', func: FireAoe},
             1107: {msg: 'Double Paw'},
-            1108: {msg: 'Fire AOE'},
-            1109: {msg: 'Ice AOE'},
+//            1108: {msg: 'Fire Backswing'
+//            1109: {msg: 'Ice Backswing'},
+//            1110: {msg: 'Fire paw 2'},
+//            1112: {msg: 'Ice paw 2'},
             1118: {msg: 'Big Jump + Adds'},
             1119: {msg: 'Stun?'},
             1120: {msg: 'Stun'},
@@ -63,14 +71,17 @@ module.exports = function DreadspireGuide(dispatch) {
         },
         // Ice Jinn
         5002: {
+			enabled: config.boss5,
            3106: {func: JinnAttack},
         },
         // Fire Jinn
         5003: {
+			enabled: config.boss5,
             3106: {func: JinnAttack},
         },
         // Krakatox
         6000: {
+			enabled: config.boss6,
             1101: {msg: 'Prison'},
             1103: {msg: 'Slam'},
             1104: {msg: 'Slam + Back'},
@@ -86,6 +97,7 @@ module.exports = function DreadspireGuide(dispatch) {
         },
         // Lakan
         7000: {
+			enabled: config.boss7,
             1136: {msg: 'Claw'},
             1138: {func: BegoneRange}, // Begone
             1152: {msg: 'Stun + Back'},
@@ -106,6 +118,7 @@ module.exports = function DreadspireGuide(dispatch) {
         },
         // Desolarus
         8000: {
+			enabled: config.boss8,
             1101: {msg: 'Push'},
             1102: {msg: 'Pull'},
 //            1106: {msg: 'Balls'},
@@ -119,6 +132,7 @@ module.exports = function DreadspireGuide(dispatch) {
         },
         // Darkan
         9000: {
+			enabled: config.boss9,
             1101: {func: DarkanLeftAuto}, //left hand auto, right hand out
             1102: {func: DarkanRightAuto}, //right hand auto, left hand out 
 //            1103: {}, //left hand eviscerate slam, right hand out 
@@ -152,27 +166,28 @@ module.exports = function DreadspireGuide(dispatch) {
         },
         // Shandra Manaya
         10000: {
+			enabled: config.boss10,
             1102: {msg: 'Donut'},
 //            1103: {msg: 'Slap'},
-            1104: {msg: 'Jump'},  
+//            1104: {msg: 'Jump'},  
 //            1105: {msg: 'Metamorphic'}, // Front side
-            1106: {msg: 'Grenade'}, 
-            1107: {msg: 'Trample'},
-            1108: {msg: 'Flying'},
+//            1106: {msg: 'Grenade'}, 
+//            1107: {msg: 'Trample'},
+//            1108: {msg: 'Flying'},
             1109: {msg: 'Puddle'},
             1111: {msg: 'Cage'}, 
-            1112: {msg: 'Stand', startTimer: true, delay: 45000, timerMsg: 'Stand soon...'},
+            1112: {msg: 'Stand', startTimer: true, delay: 45000, timerMsg: 'Stand soon...'}, // every ~50s
 //            1113: {msg: 'L-Metamorphic'}, //  Left side
 //            1114: {msg: 'R-Metamorphic'}, // Right side   
             1115: {msg: 'Tail'},             
 //            1201: {msg: 'Staggered'},
-            1202: {msg: 'Trample'},
+//            1202: {msg: 'Trample'},
             1203: {msg: 'Walk'}, 
-            1204: {msg: 'Curl'},
-            1205: {msg: 'Dive'}, 
+            1204: {msg: 'Curl', startTimer: true, delay: 40000, timerMsg: 'Curl soon...'}, // every ~45s
+//            1205: {msg: 'Dive'}, 
 //            1206: {msg: 'Backstep'}, 
-//            13??: {msg: 'Plague/regress', startTimer: true, delay: 55000, timerMsg: 'Plague/regress soon...'}, // Great ones
-            1305: {msg: 'Staggered'}, 
+//            13??: {msg: 'Plague/regress', startTimer: true, delay: 55000, timerMsg: 'Plague/regress soon...'}, // Great ones, every ~60s
+//            1305: {msg: 'Staggered'}, 
             // TODO Plague mechanic?
             // TODO Stand and debuff mechanic?
             // TODO safespots?            
@@ -216,7 +231,7 @@ module.exports = function DreadspireGuide(dispatch) {
         90340704: 1905,   // Lakan is trying to take you on one at a time.	
         90340705: 1903,   // Lakan intends to kill all of you at once.
         // Darkan (Quest Balloon)
-        9034901: {msg: 'Fast swipe inc', checkEnrage: true}, // "I!"
+        9034901: {msg: 'FAST Swipe inc', checkEnrage: true}, // "I!"
 //        9034902: {), // "Will!"
 //        9034903: {), // "tear you apart!"
     };    
@@ -266,12 +281,12 @@ module.exports = function DreadspireGuide(dispatch) {
     }
    
 	let hooks = [],
-        gameId = undefined,
-        enabled = true,
+        enabled = config.enabled,
         insidemap = false,
-        streamMode = false,
+        streamMode = config.streamMode,
         bossInfo = undefined,
-        timer = undefined, 
+      //  timer = undefined, 
+        timers = {},
         bossLoc = undefined,
         flowerId = 999999999,
         playerDebuffs = [],
@@ -292,51 +307,49 @@ module.exports = function DreadspireGuide(dispatch) {
         // Darkan
         isEnraged = false, 
         currentMobs = [];        
-        
-    dispatch.hook('S_LOGIN', 10, (event) => {
-        gameId = event.gameId;
-    });
-    
-    command.add('ds', (arg) => {
+            
+    mod.command.add('ds', (arg) => {
+
         if (arg === undefined) {
-            enabled = !enabled;
-            command.message('DS Guide ' + (enabled ? 'Enabled' : 'Disabled') + '.');
+            mod.settings.enabled = !mod.settings.enabled;
+            mod.command.message(enabled ? 'Enabled' : 'Disabled');
         }
         else if(arg.toLowerCase() === "off")
         {
-            enabled = false;
-            command.message('DS Guide ' + (enabled ? 'Enabled' : 'Disabled') + '.');
+            mod.settings.enabled = false;
+            mod.command.message(enabled ? 'Enabled' : 'Disabled');
         }
         else if(arg.toLowerCase() === "on")
         {
-            enabled = true;
-            command.message('DS Guide ' + (enabled ? 'Enabled' : 'Disabled') + '.');
+            mod.settings.enabled = true;
+            mod.command.message(enabled ? 'Enabled' : 'Disabled');
         }
         else if(arg.toLowerCase() === "stream")
         {
-            streamMode = !streamMode;
-            command.message('DS Guide - Stream Mode: ' + (streamMode ? 'Enabled.' : 'Disabled.'));
+            mod.settings.streamMode = ! mod.settings.streamMode;
+            mod.command.message('Stream Mode: ' + (mod.settings.streamMode ? 'Enabled.' : 'Disabled.'));
         }
+        mod.saveSettings();
     });
     
-    dispatch.hook('S_LOAD_TOPO', 1, (event) => {
-        if (event.zone === mapID) {
-            if (!insidemap) command.message('Welcome to Dreadspire');
+    mod.game.me.on('change_zone', (zone, quick) => { 
+        if (zone === mapID) {
+            if (!insidemap) mod.command.message('Welcome to Dreadspire');
             insidemap = true;
             load();
         } else {
             insidemap = false;
             unload();
         }
-    });
+    })
     
 	function sendMessage(msg) {
         if (!enabled) return;
         
-		if(streamMode) {
-			command.message(msg);
+		if(config.streamMode) {
+			mod.command.message(msg);
 		} else {
-			dispatch.toClient('S_CHAT', 1, {
+			mod.send('S_CHAT', 1, {
                 channel: 21, //21 = p-notice, 1 = party
                 authorName: 'DG-Guide',
                 message: msg
@@ -348,18 +361,25 @@ module.exports = function DreadspireGuide(dispatch) {
         return bossInfo.curHp / bossInfo.maxHp;
     }
 	
-	function startTimer(message, delay) {
-		if (timer) clearTimeout(timer);
-		timer = setTimeout(() => {
+	function startTimer(message, delay, id = 'default') {
+        if (timers[id]) clearTimeout(timers[id]);
+        timers[id] = setTimeout(() => {
 			sendMessage(message);
-			timer = null;
+			timers[id] = null;
 		}, delay);	
+        
+		// if (timer) clearTimeout(timer);
+		// timer = setTimeout(() => {
+			// sendMessage(message);
+			// timer = null;
+		// }, delay);	
 	}
 
 	function SpawnFlower(position, despawnDelay = 1200, collectionId = 559){
-        if (streamMode) return;
+        if (config.streamMode) return;
+		if (!config.showSignsAndFlowers) return;
         
-		dispatch.toClient('S_SPAWN_COLLECTION', 4, {
+		mod.send('S_SPAWN_COLLECTION', 4, {
 			gameId: flowerId,
 			id: collectionId,
 			amount: 1,
@@ -374,7 +394,7 @@ module.exports = function DreadspireGuide(dispatch) {
 	}
 	
 	function DespawnFlower(id){
-        dispatch.toClient('S_DESPAWN_COLLECTION', 2, {
+        mod.send('S_DESPAWN_COLLECTION', 2, {
             gameId: id,
             collected: false
         });
@@ -389,20 +409,37 @@ module.exports = function DreadspireGuide(dispatch) {
         return {x:spawnx,y:spawny};
 	}
     
-    // Dakuryon Safespots 
+    // Dakuryon 
     function dakuryonLeftSwipe() {
-        SpawnFlower(SpawnLoc(240,100));
-        SpawnFlower(SpawnLoc(265,100));
-        SpawnFlower(SpawnLoc(270,100));
-        SpawnFlower(SpawnLoc(285,100));
-        SpawnFlower(SpawnLoc(300,100));
+		// danger zone
+        for (let i = 0; i < 12; i++ ) {
+            SpawnFlower(SpawnLoc(90, 100*i));
+        }	
+
+		// safespots
+        // for (let i = 1; i < 3; i++) {
+            // SpawnFlower(SpawnLoc(240,100*i));
+            // SpawnFlower(SpawnLoc(265,100*i));
+            // SpawnFlower(SpawnLoc(270,100*i));
+            // SpawnFlower(SpawnLoc(285,100*i));
+            // SpawnFlower(SpawnLoc(300,100*i));
+        // }
+
     }
     function dakuryonRightSwipe() {
-        SpawnFlower(SpawnLoc(60,100));
-        SpawnFlower(SpawnLoc(75,100));
-        SpawnFlower(SpawnLoc(90,100));
-        SpawnFlower(SpawnLoc(105,100));
-        SpawnFlower(SpawnLoc(120,100));
+		// danger zone
+        for (let i = 0; i < 12; i++ ) {
+            SpawnFlower(SpawnLoc(270, 100*i));
+        }		
+		
+		// safespots
+        // for (let i = 1; i < 3; i++) {
+            // SpawnFlower(SpawnLoc(60,100*i));
+            // SpawnFlower(SpawnLoc(75,100*i));
+            // SpawnFlower(SpawnLoc(90,100*i));
+            // SpawnFlower(SpawnLoc(105,100*i));
+            // SpawnFlower(SpawnLoc(120,100*i));
+        // }
     }    
     
     function skipPizzaSlice(abnormalityId) {
@@ -481,13 +518,32 @@ module.exports = function DreadspireGuide(dispatch) {
         }, delay);
 	} 
     
-    function MelditaLines() {
+    // Meldita
+    function MelditaLines() {        
         for (let i = 1; i < 6; i++) {
             SpawnFlower(SpawnLoc(0, i*50), 1500, 556);
             SpawnFlower(SpawnLoc(0, i*-50), 1500, 556);
         }
     }
     
+    // Kelsaik
+    function IceAoe() {
+        for (let degree = 0; degree < 360; degree += 360 / 36) {
+            SpawnFlower(SpawnLoc(degree,450), 5000, 556);
+        }
+    }
+    function FireAoe() {
+        for (let degree = 0; degree < 360; degree += 360 / 36) {
+            SpawnFlower(SpawnLoc(degree,250), 2000, 556);
+        }
+        
+        SpawnFlower(SpawnLoc(0,500), 5000, 556);
+        SpawnFlower(SpawnLoc(180,500), 5000, 556);
+        SpawnFlower(SpawnLoc(50,480), 5000, 556);
+        SpawnFlower(SpawnLoc(-50,480), 5000, 556);
+        SpawnFlower(SpawnLoc(130,480), 5000, 556);
+        SpawnFlower(SpawnLoc(-130,480), 5000, 556);
+    }
     function JinnAttack() {
         for (let i = 1; i < 10; i++) {
             SpawnFlower(SpawnLoc(0, i*50), 2500, 556);
@@ -532,22 +588,26 @@ module.exports = function DreadspireGuide(dispatch) {
         }
     }
     
-    // Darkan safespots
+    // Darkan
     function DarkanLeftAuto() {
         // if lastSkill was not a right auto
-        if (![1102, 2102].includes(lastSkill)) sendMessage('Swipe inc');
+//        if (![1102, 2102].includes(lastSkill)) sendMessage('Single Swipe');
+        if (![1102].includes(lastSkill)) sendMessage('Swipe inc');
     }
     function DarkanRightAuto() {
         // if lastSkill was not a left auto
-        if (![1101, 2101].includes(lastSkill)) sendMessage('Spin inc');
+        if (![1101, 2101].includes(lastSkill)) sendMessage('Spin');
     }
     function DarkanSwipeLeft() {
         SpawnFlower(SpawnLoc(240,100));
         SpawnFlower(SpawnLoc(265,100));
-        SpawnFlower(SpawnLoc(270,100));
+//        SpawnFlower(SpawnLoc(270,100));
         SpawnFlower(SpawnLoc(285,100));
         SpawnFlower(SpawnLoc(300,100));
-        // TODO Only spawn flowers when next attack is a swipe
+        
+        for (let i = 0; i < 12; i++ ) {
+            SpawnFlower(SpawnLoc(270, 100*i), 1500);
+        }
     }
     function DarkanSwipeRight() {
         // if lastSkill was not a swipe and not an uppercut
@@ -555,11 +615,14 @@ module.exports = function DreadspireGuide(dispatch) {
 //        else {
             SpawnFlower(SpawnLoc(60,100));
             SpawnFlower(SpawnLoc(75,100));
-            SpawnFlower(SpawnLoc(90,100));
+//            SpawnFlower(SpawnLoc(90,100));
             SpawnFlower(SpawnLoc(105,100));
             SpawnFlower(SpawnLoc(120,100));
+
+            for (let i = 0; i < 12; i++ ) {
+                SpawnFlower(SpawnLoc(90, 100*i), 1500);
+            }
 //        }
-        // TODO Only spawn flowers when next attack is a swipe
     }
     
     // Hooks
@@ -605,17 +668,21 @@ module.exports = function DreadspireGuide(dispatch) {
                 // Reset all bosses
                 if (bossHp <= 0) {
                     bossInfo = undefined;
-                    if (timer) clearTimeout(timer);
+                    //if (timer) clearTimeout(timer);
+                    for (timer in timers) {
+                        clearTimeout(timer);
+                    }
+                    timers = {};
                     playerDebuffs = [];
                     flowerId = 999999999;
                     bossHpWarningsNotified = [];
                 }
             });
             
-            hook('S_ACTION_STAGE', 6, (event) => {  //TODO CHECK Correct version             
+            hook('S_ACTION_STAGE', 8, (event) => {         
                 if (!bossInfo) return;
                 /* KLUDGE: Unable to find uint64 in array with .includes() ??? Converting to string for comparison atm...  */
-                if (!event.gameId.equals(bossInfo.id) && !currentMobs.includes(event.gameId.toString())) return;  
+                //if (!mod.game.me.is(event.gameId) && !currentMobs.includes(event.gameId.toString())) return;  
                 if (!BossActions[event.templateId]) return;
                 if (event.stage != 0) return;
 
@@ -625,6 +692,8 @@ module.exports = function DreadspireGuide(dispatch) {
                 
                 if (bossAction) 
                 {
+					if (!BossActions[event.templateId].enabled) return;
+					
                     bossLoc = event.loc;
                     bossLoc.w = event.w;
                     
@@ -657,7 +726,7 @@ module.exports = function DreadspireGuide(dispatch) {
                             inSoulWorld = true;
                             if (lastNextAction) {
                                 nextMessage = BossActions[7000][InversedAction[lastNextAction]].msg;
-                                startTimer('Next: ' + nextMessage, LakanNextMessageDelay);
+                                startTimer('Next: ' + nextMessage, LakanNextMessageDelay, 'Lakan');
                             }
                             lastInversionTime = Date.now();
                             shieldWarned = false;
@@ -665,17 +734,17 @@ module.exports = function DreadspireGuide(dispatch) {
                             inSoulWorld = false;
                             if (lastNextAction) {
                                 nextMessage = BossActions[7000][InversedAction[lastNextAction]].msg;
-                                startTimer('Next: ' + nextMessage, LakanNextMessageDelay);
+                                startTimer('Next: ' + nextMessage, LakanNextMessageDelay, 'Lakan');
                             }
                             lastInversionTime = Date.now();
                             shieldWarned = false;
                         } else if (!isReversed && bossAction.next) {                                         // normal "next"
                             nextMessage = BossActions[7000][bossAction.next].msg;
-                            startTimer('Next: ' + nextMessage, LakanNextMessageDelay);
+                            startTimer('Next: ' + nextMessage, LakanNextMessageDelay, 'Lakan');
                             lastNextAction = bossAction.next;
                         } else if (isReversed && bossAction.prev) {                                          // reversed "next"
                             nextMessage = BossActions[7000][bossAction.prev].msg;
-                            startTimer('Next: ' + nextMessage, LakanNextMessageDelay);
+                            startTimer('Next: ' + nextMessage, LakanNextMessageDelay, 'Lakan');
                             lastNextAction = bossAction.prev;
                         }
                     }
@@ -698,18 +767,21 @@ module.exports = function DreadspireGuide(dispatch) {
                     }
                 }                
                 // Abnormality on player
-                else if (event.target.equals(gameId)) {
+                else if(mod.game.me.is(event.target)) {
+                //else if (event.target.equals(gameId)) {
                     if (bossInfo.templateId === 3000) {
+                        if (DakuryonDebuffTake.includes(event.id) || DakuryonDebuffSkip.includes(event.id))
+                            playerDebuffs.unshift(event.id);
+/* 
                         if (DakuryonDebuffTake.includes(event.id)) dakuryonDebuffMessage = 'Take ' + dakuryonDebuffMessage;
                         else if (DakuryonDebuffSkip.includes(event.id)) dakuryonDebuffMessage = 'Skip ' + dakuryonDebuffMessage;
                         else return;
-                                                
-                        playerDebuffs.unshift(event.id);
-
+                        
                         if ([90340306, 90340307].includes(event.id)) {
 //                            sendMessage(dakuryonDebuffMessage);
                             dakuryonDebuffMessage = '';
                         }
+ */
                     }
                 }
             });
@@ -719,7 +791,12 @@ module.exports = function DreadspireGuide(dispatch) {
                 
                 let msgId = parseInt(event.message.replace('@dungeon:', ''));
                 if (BossMessages[msgId]) {
-                    if (timer) clearTimeout(timer);
+                    for (timer in timers) {
+                        console.log('clearing lakan timer');
+                        clearTimeout(timer);
+                    }
+                    
+                    
                     if (bossInfo.templateId === 7000) {
                         lastNextAction = undefined;
                         isReversed = (bossHealth() < 0.5) ? true : false;
@@ -729,19 +806,24 @@ module.exports = function DreadspireGuide(dispatch) {
                             sendMessage('Next: ' + BossActions[7000][BossMessages[msgId]].msg);
                         }
                     }
-                }
-            });
-	
-            hook('S_QUEST_BALLOON', 1, (event) => {	
-                if (!bossInfo) return;
-                
-                let msgId = parseInt(event.message.replace('@dungeon:', ''));
-                if (BossMessages[msgId]) {
-                    if (BossMessages[msgId].checkEnrage && isEnraged) {
-                        if (BossMessages[msgId].msg) sendMessage(BossMessages[msgId].msg);
+                    else if (bossInfo.templateId === 9000) {
+                        if (BossMessages[msgId].checkEnrage && isEnraged) {
+                            if (BossMessages[msgId].msg) sendMessage(BossMessages[msgId].msg);
+                        }
                     }
                 }
             });
+	
+/*     
+            hook('S_QUEST_BALLOON', 1, (event) => {	
+                if (!bossInfo) return;
+                
+                let msgId = parseInt(event.message.replace('@monsterBehavior:', ''));
+                if (BossMessages[msgId]) {
+                    if (BossMessages[msgId].msg) sendMessage(BossMessages[msgId].msg);
+                }
+            });
+*/
             
             hook('S_NPC_STATUS', 1, (event) => {	
                 if (!bossInfo) return;                
@@ -751,18 +833,23 @@ module.exports = function DreadspireGuide(dispatch) {
             
             hook('S_SPAWN_NPC', 8, event => {
                 if (!bossInfo) return;
-                
-                if (bossInfo.templateId === 8000) {
+                                
+                if  (bossInfo.templateId == 5000) {
+					if (!BossActions[5000].enabled) return;
+                    for (let i = 0; i < Mobs.length; i++) {
+                        if(Mobs[i].templateId == event.templateId && Mobs[i].huntingZoneId == event.huntingZoneId) {
+                            currentMobs.push(event.gameId.toString());
+                        }                                        
+                    }  
+                }   
+                else if (bossInfo.templateId == 8000) {
+					if (!BossActions[8000].enabled) return;
                     if (NpcSpawns[event.templateId]) {
                         sendMessage(NpcSpawns[event.templateId].msg);
                     }
                 }
                 
-                for (let i = 0; i < Mobs.length; i++) {
-                    if(Mobs[i].templateId == event.templateId && Mobs[i].huntingZoneId == event.huntingZoneId) {
-                        currentMobs.push(event.gameId.toString());
-                    }                                        
-                }                
+             
                 
             });
             
@@ -771,14 +858,14 @@ module.exports = function DreadspireGuide(dispatch) {
 	
 	function unload() {
 		if(hooks.length) {
-			for(let h of hooks) dispatch.unhook(h)
+			for(let h of hooks) mod.unhook(h)
 
 			hooks = []
 		}
 	}
 
 	function hook() {
-		hooks.push(dispatch.hook(...arguments))
+		hooks.push(mod.hook(...arguments))
 	}
-    
+        
 }

@@ -1,24 +1,36 @@
 # ds-guide
-(WIP) Calls out mechanics and boss skills.
+Guide for Dreadspire
 
 ## Commands
 ### `ds [off/on]'
 - Toggle off/on
 - Default is on
-- Arguments are optional
 
-### `ds [stream]'
-- Toggle stream mode (Disable notices)
+### `ds stream'
+- Toggle stream mode (Disable notices and flowers)
 - Default is off
+
+See config.json to toggle off specific bosses.
 
 ---
 
 ## Changelog
 <details>
 
+    1.6
+	- Fix: Patch 75 compatability
+    - Add: Config settings for bosses and flower spawns
+    - Fix: Kaprima Backspin message is called out earlier now (during breath attack)
+    - Add: Kelsaik Fire aoe grass
+    - Add: Kelsaik Ice aoe grass
+    - Fix: Darkan Swipe flower safespots were wrong side
+    - Fix: Darkan Enrage double swipe was not being called
+    - Add: Shandra curl timer
+    - Disabled some Shandra skill messages
+    - Encounters now support multiple timers.
     1.5
-    - Add: Jinn attack flowers
-    - Add: Meldita line attack flowers
+    - Add: Jinn attack grass
+    - Add: Meldita line attack grass
     1.4
     - Fix: Akasha Spin message being sent unexpectedly
     - Fix: Lakan's next message would be incorrect if he changed worlds immediately after reversal

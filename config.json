@@ -1,0 +1,16 @@
+{	
+    "enabled": true,
+    "streamMode": false,
+	"showSignsAndFlowers": true,
+		
+	"boss1": true,
+	"boss2": true,
+	"boss3": true,
+	"boss4": true,
+	"boss5": true,
+	"boss6": true,
+	"boss7": true,
+	"boss8": true,
+	"boss9": true,
+	"boss10": true
+}
