@@ -831,7 +831,7 @@ module.exports = function DreadspireGuide(mod) {
             });
             
             
-            hook('S_SPAWN_NPC', 8, event => {
+            hook('S_SPAWN_NPC', 10, event => {
                 if (!bossInfo) return;
                                 
                 if  (bossInfo.templateId == 5000) {
