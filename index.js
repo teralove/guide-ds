@@ -7,23 +7,23 @@ module.exports = function DreadspireGuide(mod) {
         // Akasha 
         1000: {
 			enabled: config.boss1,
-            1102: {msg: 'Spin', checkDouble: true, setting: "akashaSpin"}, // Charge attack
-            1304: {msg: 'Backpedal + Spin', setting: "akashaBackpedalSpin"},         
-            1105: {msg: 'Puke', setting: "akashaPuke"}, 
-            1203: {msg: 'Sleep', setting: "akashaSleep"},
+            1102: {msg: 'Spin', checkDouble: true}, // Charge attack
+            1304: {msg: 'Backpedal + Spin'},         
+            1105: {msg: 'Puke'}, 
+            1203: {msg: 'Sleep'},
         },
         // Kaprima
         2000: {
 			enabled: config.boss2,
-            1101: {msg: 'Smash inc', setting: "kaprimaSmash"},
-            1102: {msg: 'Spin', setting: "kaprimaSpin"},
-            1105: {msg: 'Back spin', setting: "kaprimaBackSpin"}, // breath attack before backspin
-            1107: {msg: 'Back', setting: "kaprimaBackStun"}, // stun
-            1108: {msg: 'Front', setting: "kaprimaFront"},
+            1101: {msg: 'Smash inc'},
+            1102: {msg: 'Spin'},
+            1105: {msg: 'Back spin'}, // breath attack before backspin
+            1107: {msg: 'Back'}, // stun
+            1108: {msg: 'Front'},
 //            1109: {msg: 'Back spin'}, // backspin as it's happening
-            1110: {msg: 'Get Out', setting: "kaprimaGetOut"},
-            1122: {msg: 'Get In', setting: "kaprimaGetIn"},
-            1119: {msg: 'Leash', setting: "kaprimaLeash"},
+            1110: {msg: 'Get Out'},
+            1122: {msg: 'Get In'},
+            1119: {msg: 'Leash'},
         },
         // Dakuryon
         3000: {
@@ -309,27 +309,26 @@ module.exports = function DreadspireGuide(mod) {
         currentMobs = [];        
             
     mod.command.add('ds', (arg) => {
-
+        if (arg) arg = arg.toLowerCase();
         if (arg === undefined) {
-            mod.settings.enabled = !mod.settings.enabled;
+            enabled = !enabled;
             mod.command.message(enabled ? 'Enabled' : 'Disabled');
         }
-        else if(arg.toLowerCase() === "off")
+        else if(arg === "off")
         {
-            mod.settings.enabled = false;
+            enabled = false;
             mod.command.message(enabled ? 'Enabled' : 'Disabled');
         }
-        else if(arg.toLowerCase() === "on")
+        else if(arg === "on")
         {
-            mod.settings.enabled = true;
+            enabled = true;
             mod.command.message(enabled ? 'Enabled' : 'Disabled');
         }
-        else if(arg.toLowerCase() === "stream")
+        else if(arg === "stream")
         {
-            mod.settings.streamMode = ! mod.settings.streamMode;
-            mod.command.message('Stream Mode: ' + (mod.settings.streamMode ? 'Enabled.' : 'Disabled.'));
+            streamMode = ! streamMode;
+            mod.command.message('Stream Mode: ' + (streamMode ? 'Enabled.' : 'Disabled.'));
         }
-        mod.saveSettings();
     });
     
     mod.game.me.on('change_zone', (zone, quick) => { 
@@ -346,7 +345,7 @@ module.exports = function DreadspireGuide(mod) {
 	function sendMessage(msg) {
         if (!enabled) return;
         
-		if(config.streamMode) {
+		if(streamMode) {
 			mod.command.message(msg);
 		} else {
 			mod.send('S_CHAT', 1, {
@@ -358,7 +357,7 @@ module.exports = function DreadspireGuide(mod) {
 	}
     
     function bossHealth() {
-        return bossInfo.curHp / bossInfo.maxHp;
+        return Number(bossInfo.curHp) / Number(bossInfo.maxHp);
     }
 	
 	function startTimer(message, delay, id = 'default') {
@@ -376,7 +375,7 @@ module.exports = function DreadspireGuide(mod) {
 	}
 
 	function SpawnFlower(position, despawnDelay = 1200, collectionId = 559){
-        if (config.streamMode) return;
+        if (streamMode) return;
 		if (!config.showSignsAndFlowers) return;
         
 		mod.send('S_SPAWN_COLLECTION', 4, {
@@ -681,8 +680,6 @@ module.exports = function DreadspireGuide(mod) {
             
             hook('S_ACTION_STAGE', 8, (event) => {         
                 if (!bossInfo) return;
-                /* KLUDGE: Unable to find uint64 in array with .includes() ??? Converting to string for comparison atm...  */
-                //if (!mod.game.me.is(event.gameId) && !currentMobs.includes(event.gameId.toString())) return;  
                 if (!BossActions[event.templateId]) return;
                 if (event.stage != 0) return;
 
@@ -757,7 +754,7 @@ module.exports = function DreadspireGuide(mod) {
                 if (!bossInfo) return;
                 
                 // Abnormality on boss
-                if (event.target.equals(bossInfo.id)) {
+                if (event.target == bossInfo.id) {
                     let bossAbnormality = BossAbnormalities[event.id];
                     if (bossAbnormality) {
                         sendMessage(bossAbnormality.msg);
