@@ -1,7 +1,7 @@
 module.exports = function DreadspireGuide(mod) {	
 	const config = require('./config.json');
-    const mapID = 9034;
-        
+    const mapID = 9034; 
+       
     // BossAction[TempalateId][Skill]
     const BossActions = {
         // Akasha 
@@ -279,6 +279,8 @@ module.exports = function DreadspireGuide(mod) {
         8200: {msg: 'Yellow Circles + Carpet'}, // Viyor
         // Alternative: Use QuestBalloon instead of SpawnNPC?
     }
+    
+    const Collection_Ids = [545, 548];
    
 	let hooks = [],
         enabled = config.enabled,
@@ -374,7 +376,7 @@ module.exports = function DreadspireGuide(mod) {
 		// }, delay);	
 	}
 
-	function SpawnFlower(position, despawnDelay = 1200, collectionId = 559){
+	function SpawnFlower(position, despawnDelay = 1200, collectionId = Collection_Ids[1]){
         if (streamMode) return;
 		if (!config.showSignsAndFlowers) return;
         
@@ -520,39 +522,39 @@ module.exports = function DreadspireGuide(mod) {
     // Meldita
     function MelditaLines() {        
         for (let i = 1; i < 6; i++) {
-            SpawnFlower(SpawnLoc(0, i*50), 1500, 556);
-            SpawnFlower(SpawnLoc(0, i*-50), 1500, 556);
+            SpawnFlower(SpawnLoc(0, i*50), 1500, Collection_Ids[0]);
+            SpawnFlower(SpawnLoc(0, i*-50), 1500, Collection_Ids[0]);
         }
     }
     
     // Kelsaik
     function IceAoe() {
         for (let degree = 0; degree < 360; degree += 360 / 36) {
-            SpawnFlower(SpawnLoc(degree,450), 5000, 556);
+            SpawnFlower(SpawnLoc(degree,450), 5000, Collection_Ids[0]);
         }
     }
     function FireAoe() {
         for (let degree = 0; degree < 360; degree += 360 / 36) {
-            SpawnFlower(SpawnLoc(degree,250), 2000, 556);
+            SpawnFlower(SpawnLoc(degree,250), 2000, Collection_Ids[0]);
         }
         
-        SpawnFlower(SpawnLoc(0,500), 5000, 556);
-        SpawnFlower(SpawnLoc(180,500), 5000, 556);
-        SpawnFlower(SpawnLoc(50,480), 5000, 556);
-        SpawnFlower(SpawnLoc(-50,480), 5000, 556);
-        SpawnFlower(SpawnLoc(130,480), 5000, 556);
-        SpawnFlower(SpawnLoc(-130,480), 5000, 556);
+        SpawnFlower(SpawnLoc(0,500), 5000, Collection_Ids[0]);
+        SpawnFlower(SpawnLoc(180,500), 5000, Collection_Ids[0]);
+        SpawnFlower(SpawnLoc(50,480), 5000, Collection_Ids[0]);
+        SpawnFlower(SpawnLoc(-50,480), 5000, Collection_Ids[0]);
+        SpawnFlower(SpawnLoc(130,480), 5000, Collection_Ids[0]);
+        SpawnFlower(SpawnLoc(-130,480), 5000, Collection_Ids[0]);
     }
     function JinnAttack() {
         for (let i = 1; i < 10; i++) {
-            SpawnFlower(SpawnLoc(0, i*50), 2500, 556);
+            SpawnFlower(SpawnLoc(0, i*50), 2500, Collection_Ids[0]);
         }
     }
     
     // Lakan safespots
     function BegoneRange() {
         for (let degree = 0; degree < 360; degree += 360 / 20) {
-            SpawnFlower(SpawnLoc(degree,250), 6000, 556);
+            SpawnFlower(SpawnLoc(degree,250), 6000, Collection_Ids[0]);
         }
     }
     function BegoneInOut() {
@@ -572,7 +574,7 @@ module.exports = function DreadspireGuide(mod) {
         }
         for (let i = 0; i < LakanLaserNormalDangerOne.length; i++) {
             for (let radius = 100; radius < 1000; radius += 50) {
-                SpawnFlower(SpawnLoc(LakanLaserNormalDangerOne[i], radius), 2500, 556);
+                SpawnFlower(SpawnLoc(LakanLaserNormalDangerOne[i], radius), 2500, Collection_Ids[0]);
             }
         }
     }
@@ -582,7 +584,7 @@ module.exports = function DreadspireGuide(mod) {
         }
         for (let i = 0; i < LakanLaserInvertedDangerOne.length; i++) {
             for (let radius = 100; radius < 1000; radius += 50) {
-                SpawnFlower(SpawnLoc(LakanLaserInvertedDangerOne[i], radius), 2500, 556);
+                SpawnFlower(SpawnLoc(LakanLaserInvertedDangerOne[i], radius), 2500, Collection_Ids[0]);
             }
         }
     }
@@ -668,8 +670,8 @@ module.exports = function DreadspireGuide(mod) {
                 if (bossHp <= 0) {
                     bossInfo = undefined;
                     //if (timer) clearTimeout(timer);
-                    for (timer in timers) {
-                        clearTimeout(timer);
+                    for (let timer in timers) {
+                        if (timer) clearTimeout(timer);
                     }
                     timers = {};
                     playerDebuffs = [];
@@ -788,9 +790,9 @@ module.exports = function DreadspireGuide(mod) {
                 
                 let msgId = parseInt(event.message.replace('@dungeon:', ''));
                 if (BossMessages[msgId]) {
-                    for (timer in timers) {
-                        console.log('clearing lakan timer');
-                        clearTimeout(timer);
+                    for (let timer in timers) {
+                        //console.log('clearing lakan timer');
+                        if (timer) clearTimeout(timer);
                     }
                     
                     
