@@ -1,4 +1,11 @@
 {
+    "disableAutoUpdate": false,
+	"name": "ds-guide",
+	"author": "teralove",
+	"description": "Guide for Dreadspire",
+	"options": {
+		"niceName": "DS Guide"
+	},
     "servers": ["https://raw.githubusercontent.com/teralove/ds-guide/master/"],
     "supportUrl": "https://github.com/teralove/ds-guide/issues"
 }
