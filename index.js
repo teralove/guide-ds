@@ -8,8 +8,7 @@ module.exports = function DreadspireGuide(mod) {
         1000: {
 			enabled: config.boss1,
             1102: {msg: 'Spin', checkDouble: true}, // Charge attack
-            1304: {msg: 'Backpedal + Spin'},         
-            1105: {msg: 'Puke'}, 
+            1304: {msg: 'Backpedal + Spin'},
             1203: {msg: 'Sleep'},
         },
         // Kaprima
@@ -20,7 +19,6 @@ module.exports = function DreadspireGuide(mod) {
             1105: {msg: 'Back spin'}, // breath attack before backspin
             1107: {msg: 'Back'}, // stun
             1108: {msg: 'Front'},
-//            1109: {msg: 'Back spin'}, // backspin as it's happening
             1110: {msg: 'Get Out'},
             1122: {msg: 'Get In'},
             1119: {msg: 'Leash'},
@@ -29,41 +27,34 @@ module.exports = function DreadspireGuide(mod) {
         3000: {
 			enabled: config.boss3,
             1112: {msg: 'Stab + Knockup'},
-            1134: {msg: 'Debuff (closest)'},         
-            1502: {msg: 'Pushback + Cage'}, 
-            1130: {msg: 'Left swipe', func: dakuryonLeftSwipe}, 
+            1134: {msg: 'Debuff (closest)'},
+            1502: {msg: 'Pushback + Cage'},
+            1130: {msg: 'Left swipe', func: dakuryonLeftSwipe},
             1131: {msg: 'Right swipe', func: dakuryonRightSwipe},
-            1122: {isCage: true, cages: [PizzaOne, PizzaInner, PizzaOuter, PizzaTwo, PizzaLast], delay: 0}, 
-            1123: {isCage: true, cages: [PizzaTwo, PizzaOne, PizzaOuter, PizzaInner, PizzaLast], delay: 200}, 
-            1124: {isCage: true, cages: [PizzaInner, PizzaTwo, PizzaOne, PizzaOuter, PizzaLast], delay: 0}, 
+            1122: {isCage: true, cages: [PizzaOne, PizzaInner, PizzaOuter, PizzaTwo, PizzaLast], delay: 0},
+            1123: {isCage: true, cages: [PizzaTwo, PizzaOne, PizzaOuter, PizzaInner, PizzaLast], delay: 200},
+            1124: {isCage: true, cages: [PizzaInner, PizzaTwo, PizzaOne, PizzaOuter, PizzaLast], delay: 0},
             1127: {isCage: true, cages: [PizzaOne, PizzaTwo, PizzaInner, PizzaOuter, PizzaLast], delay: 200},
         },
         // Meldita
-        4000: {            
+        4000: {
 			enabled: config.boss4,
             1102: {msg: 'Inner rings'},
             1103: {msg: 'Outer rings'},
             1107: {msg: 'Front'},
-            1108: {msg: 'Lines', func: MelditaLines}, 
+            1108: {msg: 'Lines', func: MelditaLines},
             1109: {msg: 'Single Laser'},
             1114: {msg: 'Secondary'},
             1205: {msg: '360 Laser + Worms'},
-            1206: {msg: 'Triple Laser'}, 
-            // TODO Specify who is targetted with single laser?
+            1206: {msg: 'Triple Laser'},
         },
         // Kelsaik
         5000: {
 			enabled: config.boss5,
-//            1101: {msg: 'Fire paw'},
-//            1102: {msg: 'Ice paw'},
             1103: {msg: 'Tail'},
             1104: {msg: 'Ice', func: IceAoe},
             1105: {msg: 'Fire', func: FireAoe},
             1107: {msg: 'Double Paw'},
-//            1108: {msg: 'Fire Backswing'
-//            1109: {msg: 'Ice Backswing'},
-//            1110: {msg: 'Fire paw 2'},
-//            1112: {msg: 'Ice paw 2'},
             1118: {msg: 'Big Jump + Adds'},
             1119: {msg: 'Stun?'},
             1120: {msg: 'Stun'},
@@ -121,79 +112,35 @@ module.exports = function DreadspireGuide(mod) {
 			enabled: config.boss8,
             1101: {msg: 'Push'},
             1102: {msg: 'Pull'},
-//            1106: {msg: 'Balls'},
-//            1107: {msg: 'Balls'},
-//            1108: {msg: 'Balls'},
-//            1109: {msg: 'Balls'},            
             1110: {msg: 'Lightning'},
             3105: {msg: 'Red Circles'},
-            // TODO Balls and target pylon?
-            // TODO Viyor direction breaking pylons?
         },
         // Darkan
         9000: {
 			enabled: config.boss9,
             1101: {func: DarkanLeftAuto}, //left hand auto, right hand out
             1102: {func: DarkanRightAuto}, //right hand auto, left hand out 
-//            1103: {}, //left hand eviscerate slam, right hand out 
-//            1104: {}, //right swipe
-//            1105: {}, //right hand eviscerate uppercut
-//            1106: {}, //right hand eviscerate slam, left hand out 
-//            1107: {}, //left swipe
-//            1108: {}, //left hand eviscerate uppercut
-//            1109: {}, //left hand back attack
-//            1110: {}, //right hand back attack
-//            1111: {}, //spin,
-//            1112: {}, //move back
-//            1113: {}, //dash
             1114: {msg: 'Rake'},
             1115: {msg: 'Puddles', startTimer: true, delay: 55000, timerMsg: 'Puddles soon...'},
             1301: {msg: 'Shout', startTimer: true, delay: 55000, timerMsg: 'Shout soon...'},
             1302: {msg: 'Bomb'},
-//            1303: {}, //drill
-//            1304: {}, //up in air, swords orbiting (cage + donuts)
-//            1305: {}, //descent from air
             1306: {msg: 'Ghost', startTimer: true, delay: 55000, timerMsg: 'Ghost soon...'},
             1401: {func: DarkanSwipeLeft}, // left crouch, right out
             1402: {func: DarkanSwipeRight}, // right crouch, right out
-            // TODO spin messages
-            /*
-            left auto, right auto, left auto  -> random swing?
-            right auto, left auto -> spin + right eviscerate + right uppercut?
-            left evis + right uppercut, right evis + left uppercut => spin spin drill
-            right evis = nothing?
-            */
         },
         // Shandra Manaya
         10000: {
 			enabled: config.boss10,
             1102: {msg: 'Donut'},
-//            1103: {msg: 'Slap'},
-//            1104: {msg: 'Jump'},  
-//            1105: {msg: 'Metamorphic'}, // Front side
-//            1106: {msg: 'Grenade'}, 
-//            1107: {msg: 'Trample'},
-//            1108: {msg: 'Flying'},
             1109: {msg: 'Puddle'},
-            1111: {msg: 'Cage'}, 
+            1111: {msg: 'Cage'},
             1112: {msg: 'Stand', startTimer: true, delay: 45000, timerMsg: 'Stand soon...'}, // every ~50s
-//            1113: {msg: 'L-Metamorphic'}, //  Left side
-//            1114: {msg: 'R-Metamorphic'}, // Right side   
-            1115: {msg: 'Tail'},             
-//            1201: {msg: 'Staggered'},
-//            1202: {msg: 'Trample'},
-            1203: {msg: 'Walk'}, 
-            1204: {msg: 'Curl', startTimer: true, delay: 40000, timerMsg: 'Curl soon...'}, // every ~45s
-//            1205: {msg: 'Dive'}, 
-//            1206: {msg: 'Backstep'}, 
-//            13??: {msg: 'Plague/regress', startTimer: true, delay: 55000, timerMsg: 'Plague/regress soon...'}, // Great ones, every ~60s
-//            1305: {msg: 'Staggered'}, 
-            // TODO Plague mechanic?
-            // TODO Stand and debuff mechanic?
-            // TODO safespots?            
+            1115: {msg: 'Tail'},
+            1203: {msg: 'Walk'},
+            1204: {msg: 'Curl', startTimer: true, delay: 40000, timerMsg: 'Curl soon...'}, // every ~45s          
         },
     };
-
+	
      const BossHpWarnings = {
         5000: [
             {hp: 0.85, msg: 'Pushing 85%... Big Jump + Adds soon'},
@@ -211,13 +158,11 @@ module.exports = function DreadspireGuide(mod) {
             {hp: 0.50, msg: 'Pushing 50%... Double balls soon' }
         ],
         9000: [
-//            {hp: 0.90, msg: 'Pushing 90%... Summoning outer ghosts' }
             {hp: 0.75, msg: 'Pushing 75%... Puddles soon' },
             {hp: 0.70, msg: 'Pushing 70%... Ghost soon' },
             {hp: 0.50, msg: 'Pushing 50%... Shouts and eviscerate swipes soon' },
         ],
         10000: [
-            {hp: 0.90, msg: 'Pushing 90%... Stand soon' },
             {hp: 0.50, msg: 'Pushing 50%... Plague/regress soon' },
             {hp: 0.08, msg: 'Pushing 8%... Walk soon' },
         ]
@@ -680,7 +625,7 @@ module.exports = function DreadspireGuide(mod) {
                 }
             });
             
-            hook('S_ACTION_STAGE', 8, (event) => {         
+            hook('S_ACTION_STAGE', 9, (event) => {         
                 if (!bossInfo) return;
                 if (!BossActions[event.templateId]) return;
                 if (event.stage != 0) return;
@@ -752,7 +697,7 @@ module.exports = function DreadspireGuide(mod) {
                 lastSkill = event.skill.id;
             });
 
-            hook('S_ABNORMALITY_BEGIN', 2, event => {  
+            hook('S_ABNORMALITY_BEGIN', 3, event => {  
                 if (!bossInfo) return;
                 
                 // Abnormality on boss
